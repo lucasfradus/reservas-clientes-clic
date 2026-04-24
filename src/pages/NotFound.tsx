@@ -4,7 +4,7 @@ export default function NotFound() {
   return (
     <div className="container" style={{ textAlign: 'center', paddingTop: 80 }}>
       <p className="t-tag">404</p>
-      <h1 className="t-serif" style={{ fontSize: 56, marginTop: 8 }}>
+      <h1 className="t-display" style={{ fontSize: 56, marginTop: 8 }}>
         Página no encontrada
       </h1>
       <p className="t-muted" style={{ marginTop: 16 }}>

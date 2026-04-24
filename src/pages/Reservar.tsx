@@ -186,7 +186,7 @@ export default function Reservar() {
     return (
       <div className="container reservar-empty">
         <p className="t-tag">Clase no disponible</p>
-        <h1 className="t-serif" style={{ fontSize: 44, marginTop: 8 }}>
+        <h1 className="t-display" style={{ fontSize: 44, marginTop: 8 }}>
           Esa clase ya no existe
         </h1>
         <p className="t-muted" style={{ marginTop: 14 }}>
@@ -226,7 +226,7 @@ export default function Reservar() {
 
       <div className="reservar__head">
         <p className="t-tag">One more step</p>
-        <h1 className="reservar__title t-serif">Completá tus datos</h1>
+        <h1 className="reservar__title t-display">Completá tus datos</h1>
         <p className="reservar__sub">
           Con esta información te enviamos la confirmación y reservamos tu lugar.
         </p>
@@ -235,7 +235,7 @@ export default function Reservar() {
       <div className="reservar__grid">
         <form className="reservar__form" onSubmit={handleSubmit} noValidate>
           <div className="reservar__form-head">
-            <p className="reservar__form-title t-serif">Tus datos</p>
+            <p className="reservar__form-title t-display">Tus datos</p>
             <p className="reservar__form-sub">
               No creamos cuenta. Solo los usamos para esta reserva.
             </p>
@@ -315,7 +315,7 @@ export default function Reservar() {
             <p className="t-tag" style={{ color: 'var(--taupe)' }}>
               Your trial class
             </p>
-            <h2 className="reservar__summary-title t-serif">{resumen.actividad}</h2>
+            <h2 className="reservar__summary-title t-display">{resumen.actividad}</h2>
 
             <div className="reservar__summary-list">
               <div className="reservar__summary-row">
@@ -350,7 +350,7 @@ export default function Reservar() {
 
             <div className="reservar__summary-total">
               <span>Total</span>
-              <span className="reservar__summary-total-val t-serif">
+              <span className="reservar__summary-total-val t-display">
                 {resumen.precio}
               </span>
             </div>

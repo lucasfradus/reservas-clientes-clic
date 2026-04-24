@@ -21,11 +21,12 @@
 }
 
 .clic-header__tagline {
-  font-family: var(--font-serif);
-  font-size: 14px;
+  font-size: 11px;
+  font-weight: 500;
   color: var(--taupe-dark);
-  letter-spacing: 0.5px;
-  padding-top: 2px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  padding-top: 3px;
   border-left: 1px solid var(--line);
   padding-left: 14px;
 }

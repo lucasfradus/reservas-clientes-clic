@@ -35,7 +35,7 @@ export default function Landing() {
     <div className="container landing">
       <section className="landing__hero">
         <p className="t-tag">Welcome to your pilates era</p>
-        <h1 className="landing__title t-serif">
+        <h1 className="landing__title t-display">
           Reservá tu primera clase
         </h1>
         <p className="landing__subtitle">
@@ -47,7 +47,7 @@ export default function Landing() {
       <section className="landing__studios">
         <div className="landing__studios-head">
           <p className="t-tag">Our studios</p>
-          <h2 className="t-serif landing__studios-title">Elegí dónde empezar</h2>
+          <h2 className="t-display landing__studios-title">Elegí dónde empezar</h2>
         </div>
 
         {state.status === 'loading' && <Loading label="Cargando sedes" />}
@@ -58,7 +58,7 @@ export default function Landing() {
 
         {state.status === 'ok' && state.sedes.length === 0 && (
           <div className="landing__empty">
-            <p className="t-serif" style={{ fontSize: 28 }}>
+            <p className="t-display" style={{ fontSize: 28 }}>
               Por ahora no hay sedes disponibles
             </p>
             <p className="t-muted" style={{ marginTop: 10 }}>

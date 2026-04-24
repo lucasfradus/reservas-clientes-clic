@@ -19,8 +19,9 @@
 }
 
 .clase-row__time {
-  font-family: var(--font-serif);
-  font-size: 24px;
+  font-size: 22px;
+  font-weight: 300;
+  letter-spacing: -0.5px;
   line-height: 1;
   min-width: 70px;
   padding-right: 20px;
@@ -57,8 +58,8 @@
 }
 
 .clase-row__cupos-num {
-  font-family: var(--font-serif);
-  font-size: 20px;
+  font-size: 18px;
+  font-weight: 500;
   line-height: 1;
   color: var(--sage);
 }

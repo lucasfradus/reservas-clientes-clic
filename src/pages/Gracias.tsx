@@ -10,7 +10,7 @@ export default function Gracias() {
         <p className="t-tag" style={{ color: 'var(--taupe)' }}>
           Reserva confirmada
         </p>
-        <h1 className="gracias__title t-serif">
+        <h1 className="gracias__title t-display">
           Welcome to
           <br />
           your pilates era.

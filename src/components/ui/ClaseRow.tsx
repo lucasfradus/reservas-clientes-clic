@@ -13,7 +13,7 @@ export function ClaseRow({ clase, sede }: { clase: Clase; sede: Sede }) {
     >
       <div className="clase-row__time">{formatTime(clase.inicio)}</div>
       <div className="clase-row__body">
-        <p className="clase-row__name t-serif">{clase.actividad.nombre}</p>
+        <p className="clase-row__name t-display">{clase.actividad.nombre}</p>
         <p className="clase-row__meta">
           {clase.instructor ? `con ${clase.instructor}` : 'Instructora a confirmar'}
           {clase.salon ? ` · ${clase.salon.nombre}` : ''}
