@@ -52,8 +52,30 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export function getSedes(): Promise<Sede[]> {
-  return request<Sede[]>('/api/public/sedes');
+/**
+ * Prisma Decimal fields get serialized as strings in JSON. Normalize them
+ * to number | null so the rest of the app can treat `precioPrueba` as a
+ * number without repeating this guard everywhere.
+ */
+function toNumber(v: unknown): number | null {
+  if (v == null) return null;
+  if (typeof v === 'number') return Number.isFinite(v) ? v : null;
+  if (typeof v === 'string') {
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  }
+  return null;
+}
+
+function normalizeSede(raw: Sede & { precioPrueba: unknown }): Sede {
+  return { ...raw, precioPrueba: toNumber(raw.precioPrueba) };
+}
+
+export async function getSedes(): Promise<Sede[]> {
+  const raw = await request<Array<Sede & { precioPrueba: unknown }>>(
+    '/api/public/sedes',
+  );
+  return raw.map(normalizeSede);
 }
 
 export function getClases(sedeId: number): Promise<Clase[]> {
