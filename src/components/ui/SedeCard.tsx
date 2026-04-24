@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Sede } from '../../types';
 import { formatPrice } from '../../lib/format';
@@ -5,11 +6,18 @@ import { Iso } from '../brand/Iso';
 import './SedeCard.css';
 
 export function SedeCard({ sede }: { sede: Sede }) {
+  const [imgBroken, setImgBroken] = useState(false);
+  const showImg = sede.imagenUrl && !imgBroken;
+
   return (
     <Link to={`/sede/${sede.slug}`} className="sede-card">
       <div className="sede-card__media">
-        {sede.imagenUrl ? (
-          <img src={sede.imagenUrl} alt={sede.nombre} />
+        {showImg ? (
+          <img
+            src={sede.imagenUrl!}
+            alt={sede.nombre}
+            onError={() => setImgBroken(true)}
+          />
         ) : (
           <div className="sede-card__fallback">
             <Iso variant="taupe" size={56} />
@@ -18,7 +26,7 @@ export function SedeCard({ sede }: { sede: Sede }) {
       </div>
       <div className="sede-card__body">
         <p className="t-tag">{sede.ciudad}</p>
-        <h3 className="sede-card__name t-serif">{sede.nombre}</h3>
+        <h3 className="sede-card__name t-display">{sede.nombre}</h3>
         <p className="sede-card__addr">{sede.direccion}</p>
         <div className="sede-card__foot">
           <div>
