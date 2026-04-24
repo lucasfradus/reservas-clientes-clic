@@ -114,6 +114,9 @@
 }
 
 .sede__hero-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   padding: 11px 20px;
   border: 1px solid rgba(253, 251, 250, 0.25);
   border-radius: var(--radius-pill);
