@@ -16,6 +16,7 @@ export interface Actividad {
   id: number;
   nombre: string;
   color: string;
+  descripcion: string | null;
 }
 
 export interface Salon {
