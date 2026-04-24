@@ -201,6 +201,9 @@ export default function Sede() {
               )}
             </div>
           </div>
+          <p className="sede__hero-note">
+            En caso de avanzar, este valor se descuenta de tu plan
+          </p>
         </div>
       </section>
 
