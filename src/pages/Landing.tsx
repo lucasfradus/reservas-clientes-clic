@@ -39,8 +39,7 @@ export default function Landing() {
           Reservá tu primera clase
         </h1>
         <p className="landing__subtitle">
-          Elegí la sede más cercana y probá una clase de reformer con nosotras.
-          Sin compromiso, solo para descubrir el método.
+          Elegí la sede más cercana y empezá a sentir el cambio desde la primera clase.
         </p>
       </section>
 

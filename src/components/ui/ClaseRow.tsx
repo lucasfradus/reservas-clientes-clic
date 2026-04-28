@@ -43,10 +43,9 @@ export function ClaseRow({ clase, sede }: { clase: Clase; sede: Sede }) {
           {clase.salon ? ` · ${clase.salon.nombre}` : ''}
         </p>
       </div>
-      <div className="clase-row__cupos">
-        <span className="clase-row__cupos-num">{cupos}</span>
+      <div className={`clase-row__cupos${cupos === 0 ? ' clase-row__cupos--agotado' : ''}`}>
         <span className="clase-row__cupos-lbl">
-          {cupos === 1 ? 'lugar' : 'lugares'}
+          {cupos > 0 ? 'Reserva ahora' : 'No disponible'}
         </span>
       </div>
       <span className="clase-row__arrow" aria-hidden="true">→</span>

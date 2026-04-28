@@ -164,12 +164,9 @@ export default function Reservar() {
     if (load.status !== 'ok') return null;
     return {
       actividad: load.clase.actividad.nombre,
-      dia: formatDayLong(load.clase.inicio),
-      hora: formatTime(load.clase.inicio),
+      fecha: `${formatDayLong(load.clase.inicio)} · ${formatTime(load.clase.inicio)}`,
       sede: load.sede.nombre,
-      direccion: load.sede.direccion,
       instructor: load.clase.instructor,
-      salon: load.clase.salon?.nombre ?? null,
       precio: formatPrice(load.sede.precioPrueba),
     };
   }, [load]);
@@ -316,34 +313,17 @@ export default function Reservar() {
               Your trial class
             </p>
             <h2 className="reservar__summary-title t-display">{resumen.actividad}</h2>
+            <p className="reservar__summary-sede">{resumen.sede}</p>
 
             <div className="reservar__summary-list">
               <div className="reservar__summary-row">
-                <span>Sede</span>
-                <span>{resumen.sede}</span>
-              </div>
-              <div className="reservar__summary-row">
-                <span>Dirección</span>
-                <span>{resumen.direccion}</span>
-              </div>
-              <div className="reservar__summary-row">
-                <span>Día</span>
-                <span>{resumen.dia}</span>
-              </div>
-              <div className="reservar__summary-row">
-                <span>Hora</span>
-                <span>{resumen.hora}</span>
+                <span>Fecha</span>
+                <span>{resumen.fecha}</span>
               </div>
               {resumen.instructor && (
                 <div className="reservar__summary-row">
                   <span>Instructora</span>
                   <span>{resumen.instructor}</span>
-                </div>
-              )}
-              {resumen.salon && (
-                <div className="reservar__summary-row">
-                  <span>Salón</span>
-                  <span>{resumen.salon}</span>
                 </div>
               )}
             </div>
