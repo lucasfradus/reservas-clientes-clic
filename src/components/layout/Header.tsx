@@ -11,9 +11,6 @@ export function Header() {
           <span className="clic-header__tagline">studio pilates</span>
         </Link>
         <nav className="clic-header__nav">
-          <Link to="/precios" className="clic-header__link">
-            Precios
-          </Link>
           <a
             href="https://clientes.clicpilates.com"
             className="clic-header__login"
