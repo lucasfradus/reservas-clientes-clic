@@ -4,6 +4,7 @@ import Landing from './pages/Landing';
 import Sede from './pages/Sede';
 import Reservar from './pages/Reservar';
 import Gracias from './pages/Gracias';
+import Precios from './pages/Precios';
 import NotFound from './pages/NotFound';
 
 export default function App() {
@@ -12,6 +13,7 @@ export default function App() {
       <Route element={<PageShell />}>
         <Route path="/" element={<Landing />} />
         <Route path="/sede/:slug" element={<Sede />} />
+        <Route path="/sede/:slug/precios" element={<Precios />} />
         <Route path="/reservar/:claseId" element={<Reservar />} />
         <Route path="/gracias" element={<Gracias />} />
         <Route path="*" element={<NotFound />} />

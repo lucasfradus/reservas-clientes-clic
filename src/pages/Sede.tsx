@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ApiError, getClases, getSedes } from '../api/client';
 import type { Clase, Sede as SedeT } from '../types';
@@ -22,6 +22,23 @@ export default function Sede() {
   const [selectedActividadId, setSelectedActividadId] = useState<number | null>(
     null,
   );
+  const [showSticky, setShowSticky] = useState(false);
+  const clasesRef = useRef<HTMLDivElement>(null);
+
+  const scrollToClases = () => {
+    clasesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  useEffect(() => {
+    const onScroll = () => {
+      const hero = document.querySelector('.sede__hero');
+      if (hero) {
+        setShowSticky(hero.getBoundingClientRect().bottom < 0);
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const load = () => {
     if (!slug) return;
@@ -165,49 +182,55 @@ export default function Sede() {
             <p className="sede__hero-desc">{sede.descripcion}</p>
           )}
 
-          <div className="sede__hero-meta">
-            <div>
-              <p className="sede__hero-meta-label">Clase de prueba</p>
-              <p className="sede__hero-meta-value">
+          {/* Offer + CTA */}
+          <div className="sede__hero-offer">
+            <div className="sede__hero-offer-text">
+              <span className="sede__hero-offer-label">Tu primera clase</span>
+              <span className="sede__hero-offer-price">
                 {formatPrice(sede.precioPrueba)}
-              </p>
+              </span>
+              <span className="sede__hero-offer-note">
+                Se descuenta de tu plan si te quedás
+              </span>
             </div>
-            <div className="sede__hero-links">
-              {sede.whatsappUrl && (
-                <a
-                  href={sede.whatsappUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="sede__hero-link"
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                  </svg>
-                  WhatsApp
-                </a>
-              )}
-              {sede.googleMapsUrl && (
-                <a
-                  href={sede.googleMapsUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="sede__hero-link"
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" />
-                  </svg>
-                  Cómo llegar
-                </a>
-              )}
-            </div>
+            <button
+              type="button"
+              className="sede__hero-cta"
+              onClick={scrollToClases}
+            >
+              Reservar clase de prueba
+            </button>
           </div>
-          <p className="sede__hero-note">
-            En caso de avanzar, este valor se descuenta de tu plan
-          </p>
+
+          {/* Secondary links */}
+          <div className="sede__hero-links-row">
+            <Link to={`/sede/${slug}/precios`}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+              </svg>
+              Ver precios
+            </Link>
+            {sede.whatsappUrl && (
+              <a href={sede.whatsappUrl} target="_blank" rel="noreferrer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                </svg>
+                WhatsApp
+              </a>
+            )}
+            {sede.googleMapsUrl && (
+              <a href={sede.googleMapsUrl} target="_blank" rel="noreferrer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" />
+                </svg>
+                Cómo llegar
+              </a>
+            )}
+          </div>
         </div>
       </section>
 
-      <section className="sede__clases">
+      <section className="sede__clases" id="clases" ref={clasesRef}>
         <div className="sede__clases-head">
           <p className="t-tag">It's pilates time</p>
           <h2 className="t-display sede__clases-title">Próximas clases</h2>
@@ -297,6 +320,24 @@ export default function Sede() {
           </div>
         )}
       </section>
+
+      {showSticky && (
+        <div className="sede__sticky-bar">
+          <div className="sede__sticky-info">
+            <span className="sede__sticky-label">Clase de prueba</span>
+            <span className="sede__sticky-price">
+              {formatPrice(sede.precioPrueba)}
+            </span>
+          </div>
+          <button
+            type="button"
+            className="sede__sticky-btn"
+            onClick={scrollToClases}
+          >
+            Reservar
+          </button>
+        </div>
+      )}
     </div>
   );
 }
