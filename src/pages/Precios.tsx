@@ -12,22 +12,31 @@ type State =
   | { status: 'error'; message: string }
   | { status: 'ok'; data: CatalogoTipo[] };
 
+type TipoPago = 'efectivo' | 'debito' | 'tarjeta';
+
 const FRECUENCIA_LABELS: Record<string, string> = {
   MENSUAL: 'Mensual',
   TRIMESTRAL: 'Trimestral',
 };
 
-const PAGO_LABELS: Record<string, string> = {
-  DEBITO_AUTOMATICO: 'Débito',
-  EFECTIVO_TRANSFERENCIA: 'Efectivo',
-  TARJETA: 'Crédito',
+const PAGO_LABELS: Record<TipoPago, string> = {
+  efectivo: 'Efectivo',
+  debito: 'Débito',
+  tarjeta: 'Crédito',
 };
+
+function precioFor(sede: CatalogoTipo['sedes'][0] | undefined, pago: TipoPago): number | null {
+  if (!sede) return null;
+  if (pago === 'efectivo') return sede.precioEfectivo;
+  if (pago === 'debito') return sede.precioDebito;
+  return sede.precioTarjeta;
+}
 
 export default function Precios() {
   const { slug } = useParams<{ slug: string }>();
   const [state, setState] = useState<State>({ status: 'loading' });
   const [frecuencia, setFrecuencia] = useState<'MENSUAL' | 'TRIMESTRAL'>('MENSUAL');
-  const [tipoPago, setTipoPago] = useState<CatalogoTipo['tipoPago'] | ''>('');
+  const [tipoPago, setTipoPago] = useState<TipoPago>('efectivo');
 
   const load = () => {
     setState({ status: 'loading' });
@@ -49,14 +58,14 @@ export default function Precios() {
 
   const itemsForSede = useMemo(() => {
     if (state.status !== 'ok') return [];
-    return state.data.filter((t) => t.planes.some((p) => p.sedeSlug === slug));
+    return state.data.filter((t) => t.sedes.some((s) => s.sedeSlug === slug));
   }, [state, slug]);
 
   const sedeNombre = useMemo(() => {
-    const plan = itemsForSede
-      .flatMap((t) => t.planes)
-      .find((p) => p.sedeSlug === slug);
-    return plan?.sedeNombre ?? 'Sede';
+    const sede = itemsForSede
+      .flatMap((t) => t.sedes)
+      .find((s) => s.sedeSlug === slug);
+    return sede?.sedeNombre ?? 'Sede';
   }, [itemsForSede, slug]);
 
   const itemsByFrecuencia = useMemo(
@@ -64,25 +73,30 @@ export default function Precios() {
     [itemsForSede, frecuencia],
   );
 
-  const availableTipoPagos = useMemo(
-    () => [...new Set(itemsByFrecuencia.map((t) => t.tipoPago))],
-    [itemsByFrecuencia],
-  );
+  const availableTipoPagos = useMemo(() => {
+    const pagos: TipoPago[] = [];
+    const has = (p: TipoPago) =>
+      itemsByFrecuencia.some((t) => {
+        const s = t.sedes.find((x) => x.sedeSlug === slug);
+        return s ? precioFor(s, p) != null : false;
+      });
+    if (has('efectivo')) pagos.push('efectivo');
+    if (has('debito')) pagos.push('debito');
+    if (has('tarjeta')) pagos.push('tarjeta');
+    return pagos;
+  }, [itemsByFrecuencia, slug]);
 
-  // Auto-switch tipoPago when frecuencia changes or availability changes
+  // Auto-switch tipoPago if current is unavailable
   useEffect(() => {
-    if (availableTipoPagos.length === 0) {
-      setTipoPago('');
-      return;
-    }
-    if (tipoPago && !availableTipoPagos.includes(tipoPago)) {
+    if (availableTipoPagos.length === 0) return;
+    if (!availableTipoPagos.includes(tipoPago)) {
       setTipoPago(availableTipoPagos[0]);
     }
   }, [availableTipoPagos, tipoPago]);
 
   const itemsToShow = useMemo(
-    () => itemsByFrecuencia.filter((t) => t.tipoPago === tipoPago),
-    [itemsByFrecuencia, tipoPago],
+    () => itemsByFrecuencia,
+    [itemsByFrecuencia],
   );
 
   if (state.status === 'loading') {
@@ -118,9 +132,7 @@ export default function Precios() {
           </Link>
         </div>
 
-        <div className="precios__eyebrow">
-          ◆ {sedeNombre}
-        </div>
+        <div className="precios__eyebrow">◆ {sedeNombre}</div>
 
         {/* Frecuencia tabs */}
         <div className="precios__toggle-wrap">
@@ -144,12 +156,13 @@ export default function Precios() {
         <div className="precios__pay-bar">
           <span className="precios__pay-q">Pagando con</span>
           <div className="precios__pay-select">
-            {availableTipoPagos.map((tp) => (
+            {(['efectivo', 'debito', 'tarjeta'] as TipoPago[]).map((tp) => (
               <button
                 key={tp}
                 type="button"
                 onClick={() => setTipoPago(tp)}
-                className={`precios__pay-opt${tipoPago === tp ? ' precios__pay-opt--active' : ''}`}
+                disabled={!availableTipoPagos.includes(tp)}
+                className={`precios__pay-opt${tipoPago === tp ? ' precios__pay-opt--active' : ''}${!availableTipoPagos.includes(tp) ? ' precios__pay-opt--disabled' : ''}`}
               >
                 {PAGO_LABELS[tp]}
               </button>
@@ -165,8 +178,8 @@ export default function Precios() {
         ) : (
           <div className="precios__cards">
             {itemsToShow.map((item) => {
-              const plan = item.planes.find((p) => p.sedeSlug === slug);
-              const precio = plan?.precio ?? 0;
+              const sedeData = item.sedes.find((s) => s.sedeSlug === slug);
+              const precio = precioFor(sedeData, tipoPago);
 
               return (
                 <div
@@ -181,9 +194,15 @@ export default function Precios() {
                   <div className="precios__plan-sub">{item.subtitulo}</div>
 
                   <div className="precios__price-block">
-                    <div className="precios__price-big">
-                      {formatPrice(precio)}
-                    </div>
+                    {precio != null ? (
+                      <div className="precios__price-big">
+                        {formatPrice(precio)}
+                      </div>
+                    ) : (
+                      <div className="precios__price-big precios__price-big--na">
+                        No disponible
+                      </div>
+                    )}
                   </div>
 
                   <Link
@@ -196,12 +215,18 @@ export default function Precios() {
                   <div className="precios__divider" />
 
                   <ul className="precios__list">
-                    {item.caracteristicas.map((it, i) => (
-                      <li key={i} className="precios__li">
-                        <span className="precios__check">✓</span>
-                        {it}
+                    {item.caracteristicas.length > 0 ? (
+                      item.caracteristicas.map((it, i) => (
+                        <li key={i} className="precios__li">
+                          <span className="precios__check">✓</span>
+                          {it}
+                        </li>
+                      ))
+                    ) : (
+                      <li className="precios__li precios__li--muted">
+                        Plan mensual flexible
                       </li>
-                    ))}
+                    )}
                   </ul>
                 </div>
               );

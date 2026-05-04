@@ -40,12 +40,12 @@ export default function CatalogoPrecios() {
       { id: number; nombre: string; slug: string }
     >();
     for (const tipo of state.data) {
-      for (const plan of tipo.planes) {
-        if (!map.has(plan.sedeId)) {
-          map.set(plan.sedeId, {
-            id: plan.sedeId,
-            nombre: plan.sedeNombre,
-            slug: plan.sedeSlug,
+      for (const sede of tipo.sedes) {
+        if (!map.has(sede.sedeId)) {
+          map.set(sede.sedeId, {
+            id: sede.sedeId,
+            nombre: sede.sedeNombre,
+            slug: sede.sedeSlug,
           });
         }
       }
@@ -58,8 +58,8 @@ export default function CatalogoPrecios() {
     const map = new Map<number, Map<number, number>>();
     for (const tipo of state.data) {
       const tipoMap = new Map<number, number>();
-      for (const plan of tipo.planes) {
-        tipoMap.set(plan.sedeId, plan.precio);
+      for (const sede of tipo.sedes) {
+        tipoMap.set(sede.sedeId, sede.precioEfectivo);
       }
       map.set(tipo.id, tipoMap);
     }
@@ -171,20 +171,20 @@ export default function CatalogoPrecios() {
                 <p className="catalogo__card-desc">{tipo.descripcion}</p>
               )}
               <div className="catalogo__card-prices">
-                {tipo.planes.map((plan) => (
-                  <div key={plan.sedeId} className="catalogo__card-row">
+                {tipo.sedes.map((sede) => (
+                  <div key={sede.sedeId} className="catalogo__card-row">
                     <span className="catalogo__card-sede">
-                      {plan.sedeNombre}
+                      {sede.sedeNombre}
                     </span>
                     <Link
-                      to={`/sede/${plan.sedeSlug}`}
+                      to={`/sede/${sede.sedeSlug}`}
                       className="catalogo__card-link"
                     >
-                      {formatPrice(plan.precio)} →
+                      {formatPrice(sede.precioEfectivo)} →
                     </Link>
                   </div>
                 ))}
-                {tipo.planes.length === 0 && (
+                {tipo.sedes.length === 0 && (
                   <p className="catalogo__na">
                     No disponible por el momento
                   </p>

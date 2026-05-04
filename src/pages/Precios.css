@@ -187,6 +187,11 @@
   color: var(--pm-ink);
 }
 
+.precios__pay-opt--disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
 .precios__best-badge {
   font-size: 9px;
   background: rgba(255, 255, 255, 0.18);
@@ -303,6 +308,12 @@
   color: var(--pm-ink);
 }
 
+.precios__price-big--na {
+  font-size: 20px;
+  font-style: italic;
+  opacity: 0.45;
+}
+
 .precios__price-small {
   font-size: 13px;
   color: var(--pm-ink);
@@ -383,6 +394,11 @@
   gap: 10px;
   align-items: flex-start;
   line-height: 1.45;
+}
+
+.precios__li--muted {
+  opacity: 0.45;
+  font-style: italic;
 }
 
 .precios__check {

@@ -46,11 +46,13 @@ export interface CheckoutResponse {
   initPoint: string;
 }
 
-export interface CatalogoPlan {
+export interface CatalogoSede {
   sedeId: number;
   sedeNombre: string;
   sedeSlug: string;
-  precio: number;
+  precioEfectivo: number;
+  precioDebito: number;
+  precioTarjeta: number | null;
 }
 
 export interface CatalogoTipo {
@@ -58,10 +60,9 @@ export interface CatalogoTipo {
   nombre: string;
   descripcion: string | null;
   frecuencia: 'MENSUAL' | 'TRIMESTRAL';
-  tipoPago: 'DEBITO_AUTOMATICO' | 'EFECTIVO_TRANSFERENCIA' | 'TARJETA';
   etiqueta: string;
   subtitulo: string;
   destacado: boolean;
   caracteristicas: string[];
-  planes: CatalogoPlan[];
+  sedes: CatalogoSede[];
 }
