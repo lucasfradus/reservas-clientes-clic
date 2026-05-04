@@ -1,4 +1,5 @@
 import type {
+  CatalogoTipo,
   CheckoutPayload,
   CheckoutResponse,
   Clase,
@@ -80,6 +81,10 @@ export async function getSedes(): Promise<Sede[]> {
 
 export function getClases(sedeId: number): Promise<Clase[]> {
   return request<Clase[]>(`/api/public/sedes/${sedeId}/clases`);
+}
+
+export function getCatalogo(): Promise<CatalogoTipo[]> {
+  return request<CatalogoTipo[]>('/api/public/catalogo');
 }
 
 export function checkout(payload: CheckoutPayload): Promise<CheckoutResponse> {

@@ -45,3 +45,17 @@ export interface CheckoutPayload {
 export interface CheckoutResponse {
   initPoint: string;
 }
+
+export interface CatalogoPlan {
+  sedeId: number;
+  sedeNombre: string;
+  sedeSlug: string;
+  precio: number;
+}
+
+export interface CatalogoTipo {
+  id: number;
+  nombre: string;
+  descripcion: string | null;
+  planes: CatalogoPlan[];
+}

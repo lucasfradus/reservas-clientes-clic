@@ -37,6 +37,17 @@
   gap: 28px;
 }
 
+.clic-header__link {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  transition: color 0.2s;
+}
+
+.clic-header__link:hover {
+  color: var(--ink);
+}
+
 .clic-header__login {
   display: inline-flex;
   align-items: center;
