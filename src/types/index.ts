@@ -57,5 +57,11 @@ export interface CatalogoTipo {
   id: number;
   nombre: string;
   descripcion: string | null;
+  frecuencia: 'MENSUAL' | 'TRIMESTRAL';
+  tipoPago: 'DEBITO_AUTOMATICO' | 'EFECTIVO_TRANSFERENCIA' | 'TARJETA';
+  etiqueta: string;
+  subtitulo: string;
+  destacado: boolean;
+  caracteristicas: string[];
   planes: CatalogoPlan[];
 }

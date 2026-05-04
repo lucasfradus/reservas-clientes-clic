@@ -78,23 +78,8 @@
 }
 
 @media (max-width: 768px) {
-  .precios__header {
-    flex-direction: column;
-    align-items: flex-start;
-    margin-bottom: 24px;
-  }
-
-  .precios__title {
-    font-size: 32px;
-    white-space: normal;
-  }
-
   .precios__price-big {
     font-size: 32px;
-  }
-
-  .precios__lead {
-    margin-top: 14px;
   }
 }
 
@@ -126,6 +111,11 @@
 .precios__toggle--active {
   background: var(--pm-surface);
   color: var(--pm-ink);
+}
+
+.precios__toggle--disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
 }
 
 .precios__save-pill {
@@ -210,6 +200,7 @@
 @media (max-width: 768px) {
   .precios__pay-bar {
     gap: 8px;
+    margin-bottom: 18px;
   }
 
   .precios__pay-select {
@@ -250,13 +241,11 @@
 .precios__card--destacado {
   background: var(--pm-surface);
   border: 1px solid var(--pm-sand-deep);
-  transform: translateY(-10px);
   box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.5);
 }
 
 @media (max-width: 900px) {
   .precios__card--destacado {
-    transform: none;
     order: -1;
     margin-top: 16px;
   }
@@ -400,6 +389,13 @@
   color: var(--pm-sand-deep);
   font-weight: 700;
   flex-shrink: 0;
+}
+
+.precios__empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--pm-sand);
+  opacity: 0.6;
 }
 
 /* Footer note */
