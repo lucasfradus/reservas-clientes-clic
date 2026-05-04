@@ -195,9 +195,17 @@ export default function Precios() {
 
                   <div className="precios__price-block">
                     {precio != null ? (
-                      <div className="precios__price-big">
-                        {formatPrice(precio)}
-                      </div>
+                      <>
+                        <div className="precios__price-big">
+                          {formatPrice(precio)}
+                        </div>
+                        {tipoPago !== 'tarjeta' && sedeData?.precioTarjeta != null && sedeData.precioTarjeta > 0 && precio < sedeData.precioTarjeta && (
+                          <div className="precios__savings">
+                            <span className="precios__savings-dot" />
+                            Ahorrás {Math.round((1 - precio / sedeData.precioTarjeta) * 100)}% vs crédito
+                          </div>
+                        )}
+                      </>
                     ) : (
                       <div className="precios__price-big precios__price-big--na">
                         No disponible
