@@ -44,11 +44,6 @@ export default function Landing() {
       </section>
 
       <section className="landing__studios">
-        <div className="landing__studios-head">
-          <p className="t-tag">Our studios</p>
-          <h2 className="t-display landing__studios-title">Elegí dónde empezar</h2>
-        </div>
-
         {state.status === 'loading' && <Loading label="Cargando sedes" />}
 
         {state.status === 'error' && (

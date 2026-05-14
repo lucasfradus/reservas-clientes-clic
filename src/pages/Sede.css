@@ -83,10 +83,10 @@
   margin-top: auto;
   padding-top: 28px;
   display: flex;
-  align-items: center;
-  gap: 20px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 18px;
   border-top: 1px solid rgba(253, 251, 250, 0.1);
-  flex-wrap: wrap;
 }
 
 .sede__hero-offer-text {
@@ -117,7 +117,8 @@
 }
 
 .sede__hero-cta {
-  margin-left: auto;
+  width: 100%;
+  justify-content: center;
   display: inline-flex;
   align-items: center;
   justify-content: center;

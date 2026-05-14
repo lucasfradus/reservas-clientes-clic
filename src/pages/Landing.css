@@ -1,21 +1,21 @@
 .landing__hero {
   text-align: center;
-  padding: 40px 0 64px;
+  padding: 24px 0 28px;
   max-width: 680px;
   margin: 0 auto;
 }
 
 .landing__title {
-  font-size: 64px;
-  line-height: 1;
-  margin-top: 18px;
+  font-size: 44px;
+  line-height: 1.05;
+  margin-top: 10px;
   color: var(--ink);
 }
 
 .landing__subtitle {
-  margin-top: 20px;
+  margin-top: 12px;
   font-size: 14px;
-  line-height: 1.65;
+  line-height: 1.55;
   color: var(--ink-soft);
   max-width: 520px;
   margin-left: auto;
@@ -23,20 +23,7 @@
 }
 
 .landing__studios {
-  margin-top: 16px;
-}
-
-.landing__studios-head {
-  text-align: center;
-  margin-bottom: 36px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--line);
-}
-
-.landing__studios-title {
-  font-size: 32px;
   margin-top: 8px;
-  color: var(--ink);
 }
 
 .landing__grid {
@@ -61,16 +48,18 @@
 
 @media (max-width: 768px) {
   .landing__hero {
-    padding: 24px 0 48px;
+    padding: 12px 0 16px;
   }
   .landing__title {
-    font-size: 44px;
+    font-size: 30px;
+    margin-top: 6px;
+  }
+  .landing__subtitle {
+    margin-top: 8px;
+    font-size: 13px;
   }
   .landing__grid {
     grid-template-columns: 1fr;
     gap: 16px;
-  }
-  .landing__studios-title {
-    font-size: 26px;
   }
 }
