@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Clase, Sede } from '../../types';
 import { formatTime } from '../../lib/format';
+import { trackEvent } from '../../lib/analytics';
 import './ClaseRow.css';
 
 export function ClaseRow({ clase, sede }: { clase: Clase; sede: Sede }) {
@@ -14,6 +15,14 @@ export function ClaseRow({ clase, sede }: { clase: Clase; sede: Sede }) {
       to={`/reservar/${clase.id}`}
       state={{ clase, sede }}
       className="clase-row"
+      onClick={() =>
+        trackEvent('begin_reserva', {
+          clase_id: clase.id,
+          sede_slug: sede.slug,
+          sede_nombre: sede.nombre,
+          actividad: clase.actividad.nombre,
+        })
+      }
     >
       <div className="clase-row__time">{formatTime(clase.inicio)}</div>
       <div className="clase-row__body">

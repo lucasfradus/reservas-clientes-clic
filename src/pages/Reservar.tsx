@@ -12,6 +12,7 @@ import {
   formatPrice,
   formatTime,
 } from '../lib/format';
+import { trackMetaEvent } from '../lib/meta';
 import './Reservar.css';
 
 interface LocationState {
@@ -143,6 +144,20 @@ export default function Reservar() {
         email: form.email.trim(),
         telefono: form.telefono.trim(),
       });
+
+      // Meta: inicio del checkout. El monto y la moneda viajan como parámetros;
+      // el Purchase se dispara en /gracias leyendo los query params de Mercado Pago.
+      const precio = load.sede.precioPrueba;
+      const checkoutParams: Record<string, unknown> = {
+        content_name: load.clase.actividad.nombre,
+        content_category: load.sede.nombre,
+      };
+      if (precio != null) {
+        checkoutParams.value = precio;
+        checkoutParams.currency = 'ARS';
+      }
+      trackMetaEvent('InitiateCheckout', checkoutParams);
+
       window.location.href = res.initPoint;
     } catch (err) {
       setSubmitting(false);

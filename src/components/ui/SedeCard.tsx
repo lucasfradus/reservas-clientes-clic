@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Sede } from '../../types';
 import { formatPrice } from '../../lib/format';
+import { trackEvent } from '../../lib/analytics';
 import { Iso } from '../brand/Iso';
 import './SedeCard.css';
 
@@ -10,7 +11,16 @@ export function SedeCard({ sede }: { sede: Sede }) {
   const showImg = sede.imagenUrl && !imgBroken;
 
   return (
-    <Link to={`/sede/${sede.slug}`} className="sede-card">
+    <Link
+      to={`/sede/${sede.slug}`}
+      className="sede-card"
+      onClick={() =>
+        trackEvent('select_sede', {
+          sede_slug: sede.slug,
+          sede_nombre: sede.nombre,
+        })
+      }
+    >
       <div className="sede-card__media">
         {showImg ? (
           <img

@@ -7,6 +7,7 @@ import { Loading } from '../components/ui/Loading';
 import { ErrorBanner } from '../components/ui/ErrorBanner';
 import { ClaseRow } from '../components/ui/ClaseRow';
 import { dayKey, formatDayLong, formatPrice } from '../lib/format';
+import { trackMetaEvent } from '../lib/meta';
 import './Sede.css';
 
 type State =
@@ -68,6 +69,20 @@ export default function Sede() {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(load, [slug]);
+
+  // Meta: registrar la vista de la sede (contenido + oferta) una vez cargada.
+  useEffect(() => {
+    if (state.status !== 'ok') return;
+    const params: Record<string, unknown> = {
+      content_name: state.sede.nombre,
+      content_category: 'sede',
+    };
+    if (state.sede.precioPrueba != null) {
+      params.value = state.sede.precioPrueba;
+      params.currency = 'ARS';
+    }
+    trackMetaEvent('ViewContent', params);
+  }, [state]);
 
   // Distinct activities present in the class list, with counts. Used to
   // render the filter pills. Sorted by count desc so the most frequent one
