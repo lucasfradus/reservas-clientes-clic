@@ -1,5 +1,5 @@
 import type {
-  CatalogoTipo,
+  CatalogoSede,
   CheckoutPayload,
   CheckoutResponse,
   Clase,
@@ -83,8 +83,9 @@ export function getClases(sedeId: number): Promise<Clase[]> {
   return request<Clase[]>(`/api/public/sedes/${sedeId}/clases`);
 }
 
-export function getCatalogo(): Promise<CatalogoTipo[]> {
-  return request<CatalogoTipo[]>('/api/public/catalogo');
+export function getCatalogo(sede?: string | number): Promise<CatalogoSede[]> {
+  const query = sede != null ? `?sede=${encodeURIComponent(sede)}` : '';
+  return request<CatalogoSede[]>(`/api/public/catalogo${query}`);
 }
 
 export function checkout(payload: CheckoutPayload): Promise<CheckoutResponse> {

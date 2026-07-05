@@ -46,16 +46,13 @@ export interface CheckoutResponse {
   initPoint: string;
 }
 
-export interface CatalogoSede {
-  sedeId: number;
-  sedeNombre: string;
-  sedeSlug: string;
-  precioEfectivo: number;
-  precioDebito: number;
-  precioTarjeta: number | null;
+export interface CatalogoPrecios {
+  efectivo: number | null;
+  debito: number | null;
+  tarjeta: number | null;
 }
 
-export interface CatalogoTipo {
+export interface CatalogoTipoPlan {
   id: number;
   nombre: string;
   descripcion: string | null;
@@ -64,5 +61,13 @@ export interface CatalogoTipo {
   subtitulo: string;
   destacado: boolean;
   caracteristicas: string[];
-  sedes: CatalogoSede[];
+  orden: number;
+  precios: CatalogoPrecios;
+}
+
+export interface CatalogoSede {
+  sedeId: number;
+  sedeNombre: string;
+  sedeSlug: string;
+  tipos: CatalogoTipoPlan[];
 }

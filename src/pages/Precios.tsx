@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ApiError, getCatalogo } from '../api/client';
-import type { CatalogoTipo } from '../types';
+import type { CatalogoSede, CatalogoTipoPlan } from '../types';
 import { formatPrice } from '../lib/format';
+import { trackEvent } from '../lib/analytics';
 import { Loading } from '../components/ui/Loading';
 import { ErrorBanner } from '../components/ui/ErrorBanner';
 import './Precios.css';
@@ -10,7 +11,7 @@ import './Precios.css';
 type State =
   | { status: 'loading' }
   | { status: 'error'; message: string }
-  | { status: 'ok'; data: CatalogoTipo[] };
+  | { status: 'ok'; data: CatalogoSede[] };
 
 type TipoPago = 'efectivo' | 'debito' | 'tarjeta';
 
@@ -25,11 +26,13 @@ const PAGO_LABELS: Record<TipoPago, string> = {
   tarjeta: 'Crédito',
 };
 
-function precioFor(sede: CatalogoTipo['sedes'][0] | undefined, pago: TipoPago): number | null {
-  if (!sede) return null;
-  if (pago === 'efectivo') return sede.precioEfectivo;
-  if (pago === 'debito') return sede.precioDebito;
-  return sede.precioTarjeta;
+function precioFor(tipo: CatalogoTipoPlan | undefined, pago: TipoPago): number | null {
+  if (!tipo) return null;
+  return tipo.precios[pago];
+}
+
+function tieneAlgunPrecio(tipo: CatalogoTipoPlan): boolean {
+  return tipo.precios.efectivo != null || tipo.precios.debito != null || tipo.precios.tarjeta != null;
 }
 
 export default function Precios() {
@@ -40,7 +43,7 @@ export default function Precios() {
 
   const load = () => {
     setState({ status: 'loading' });
-    getCatalogo()
+    getCatalogo(slug)
       .then((data) => setState({ status: 'ok', data }))
       .catch((err) =>
         setState({
@@ -53,20 +56,25 @@ export default function Precios() {
       );
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(load, []);
+  useEffect(load, [slug]);
 
-  const itemsForSede = useMemo(() => {
-    if (state.status !== 'ok') return [];
-    return state.data.filter((t) => t.sedes.some((s) => s.sedeSlug === slug));
+  useEffect(() => {
+    trackEvent('view_precios', { sede_slug: slug });
+  }, [slug]);
+
+  const sede = useMemo(() => {
+    if (state.status !== 'ok') return undefined;
+    return state.data.find((s) => s.sedeSlug === slug) ?? state.data[0];
   }, [state, slug]);
 
-  const sedeNombre = useMemo(() => {
-    const sede = itemsForSede
-      .flatMap((t) => t.sedes)
-      .find((s) => s.sedeSlug === slug);
-    return sede?.sedeNombre ?? 'Sede';
-  }, [itemsForSede, slug]);
+  const sedeNombre = sede?.sedeNombre ?? 'Sede';
+
+  const itemsForSede = useMemo(() => {
+    if (!sede) return [];
+    return [...sede.tipos]
+      .filter(tieneAlgunPrecio)
+      .sort((a, b) => a.orden - b.orden);
+  }, [sede]);
 
   const itemsByFrecuencia = useMemo(
     () => itemsForSede.filter((t) => t.frecuencia === frecuencia),
@@ -76,15 +84,12 @@ export default function Precios() {
   const availableTipoPagos = useMemo(() => {
     const pagos: TipoPago[] = [];
     const has = (p: TipoPago) =>
-      itemsByFrecuencia.some((t) => {
-        const s = t.sedes.find((x) => x.sedeSlug === slug);
-        return s ? precioFor(s, p) != null : false;
-      });
+      itemsByFrecuencia.some((t) => precioFor(t, p) != null);
     if (has('efectivo')) pagos.push('efectivo');
     if (has('debito')) pagos.push('debito');
     if (has('tarjeta')) pagos.push('tarjeta');
     return pagos;
-  }, [itemsByFrecuencia, slug]);
+  }, [itemsByFrecuencia]);
 
   // Auto-switch tipoPago if current is unavailable
   useEffect(() => {
@@ -178,8 +183,7 @@ export default function Precios() {
         ) : (
           <div className="precios__cards">
             {itemsToShow.map((item) => {
-              const sedeData = item.sedes.find((s) => s.sedeSlug === slug);
-              const precio = precioFor(sedeData, tipoPago);
+              const precio = precioFor(item, tipoPago);
 
               return (
                 <div
@@ -199,10 +203,10 @@ export default function Precios() {
                         <div className="precios__price-big">
                           {formatPrice(precio)}
                         </div>
-                        {tipoPago !== 'tarjeta' && sedeData?.precioTarjeta != null && sedeData.precioTarjeta > 0 && precio < sedeData.precioTarjeta && (
+                        {tipoPago !== 'tarjeta' && item.precios.tarjeta != null && item.precios.tarjeta > 0 && precio < item.precios.tarjeta && (
                           <div className="precios__savings">
                             <span className="precios__savings-dot" />
-                            Ahorrás {Math.round((1 - precio / sedeData.precioTarjeta) * 100)}% vs crédito
+                            Ahorrás {Math.round((1 - precio / item.precios.tarjeta) * 100)}% vs crédito
                           </div>
                         )}
                       </>
