@@ -21,9 +21,9 @@ const FRECUENCIA_LABELS: Record<string, string> = {
 };
 
 const PAGO_LABELS: Record<TipoPago, string> = {
-  efectivo: 'Efectivo',
-  debito: 'Débito',
-  tarjeta: 'Crédito',
+  efectivo: 'Efectivo o Transferencia',
+  debito: 'Débito Automático',
+  tarjeta: 'Tarjeta de Crédito',
 };
 
 function precioFor(tipo: CatalogoTipoPlan | undefined, pago: TipoPago): number | null {
