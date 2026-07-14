@@ -6,6 +6,7 @@ import { Iso } from '../components/brand/Iso';
 import { Loading } from '../components/ui/Loading';
 import { ErrorBanner } from '../components/ui/ErrorBanner';
 import { ClaseRow } from '../components/ui/ClaseRow';
+import { SedeGaleria } from '../components/ui/SedeGaleria';
 import { dayKey, formatDayLong, formatPrice } from '../lib/format';
 import { trackMetaEvent } from '../lib/meta';
 import './Sede.css';
@@ -19,7 +20,6 @@ type State =
 export default function Sede() {
   const { slug } = useParams();
   const [state, setState] = useState<State>({ status: 'loading' });
-  const [heroImgBroken, setHeroImgBroken] = useState(false);
   const [selectedActividadId, setSelectedActividadId] = useState<number | null>(
     null,
   );
@@ -44,7 +44,6 @@ export default function Sede() {
   const load = () => {
     if (!slug) return;
     setState({ status: 'loading' });
-    setHeroImgBroken(false);
     setSelectedActividadId(null);
     getSedes()
       .then(async (sedes) => {
@@ -164,6 +163,12 @@ export default function Sede() {
 
   const { sede, clases } = state;
 
+  // La imagen de cabecera abre el carrusel y la galería la continúa.
+  // Set dedupe por si el estudio subió la misma foto en ambos lados.
+  const heroImages = Array.from(
+    new Set([...(sede.imagenUrl ? [sede.imagenUrl] : []), ...sede.fotos]),
+  );
+
   return (
     <div className="container sede">
       <div className="sede__back">
@@ -174,17 +179,16 @@ export default function Sede() {
 
       <section className="sede__hero">
         <div className="sede__hero-media">
-          {sede.imagenUrl && !heroImgBroken ? (
-            <img
-              src={sede.imagenUrl}
-              alt={sede.nombre}
-              onError={() => setHeroImgBroken(true)}
-            />
-          ) : (
-            <div className="sede__hero-fallback">
-              <Iso variant="white" size={88} />
-            </div>
-          )}
+          <SedeGaleria
+            key={sede.id}
+            images={heroImages}
+            sedeNombre={sede.nombre}
+            fallback={
+              <div className="sede__hero-fallback">
+                <Iso variant="white" size={88} />
+              </div>
+            }
+          />
         </div>
         <div className="sede__hero-body">
           <p className="t-tag" style={{ color: 'var(--taupe)' }}>

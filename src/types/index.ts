@@ -7,6 +7,7 @@ export interface Sede {
   email: string | null;
   descripcion: string | null;
   imagenUrl: string | null;
+  fotos: string[];
   whatsappUrl: string | null;
   googleMapsUrl: string | null;
   precioPrueba: number | null;

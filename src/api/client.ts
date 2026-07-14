@@ -68,14 +68,23 @@ function toNumber(v: unknown): number | null {
   return null;
 }
 
-function normalizeSede(raw: Sede & { precioPrueba: unknown }): Sede {
-  return { ...raw, precioPrueba: toNumber(raw.precioPrueba) };
+function normalizeSede(
+  raw: Sede & { precioPrueba: unknown; fotos?: unknown },
+): Sede {
+  return {
+    ...raw,
+    precioPrueba: toNumber(raw.precioPrueba),
+    // `fotos` puede faltar en respuestas cacheadas viejas: tratarlo como [].
+    fotos: Array.isArray(raw.fotos)
+      ? raw.fotos.filter((f): f is string => typeof f === 'string' && f !== '')
+      : [],
+  };
 }
 
 export async function getSedes(): Promise<Sede[]> {
-  const raw = await request<Array<Sede & { precioPrueba: unknown }>>(
-    '/api/public/sedes',
-  );
+  const raw = await request<
+    Array<Sede & { precioPrueba: unknown; fotos?: unknown }>
+  >('/api/public/sedes');
   return raw.map(normalizeSede);
 }
 
