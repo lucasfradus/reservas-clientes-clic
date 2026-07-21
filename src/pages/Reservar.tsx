@@ -26,13 +26,14 @@ type LoadState =
   | { status: 'error'; message: string }
   | { status: 'ok'; clase: Clase; sede: Sede };
 
-type FormErrors = Partial<Record<'nombre' | 'apellido' | 'email' | 'telefono', string>>;
+type FormErrors = Partial<Record<'nombre' | 'apellido' | 'email' | 'telefono' | 'dni', string>>;
 
 function validate(form: {
   nombre: string;
   apellido: string;
   email: string;
   telefono: string;
+  dni: string;
 }): FormErrors {
   const errors: FormErrors = {};
   if (!form.nombre.trim()) errors.nombre = 'Ingresá tu nombre';
@@ -46,6 +47,12 @@ function validate(form: {
     errors.telefono = 'Ingresá tu teléfono';
   } else if (form.telefono.replace(/\D/g, '').length < 8) {
     errors.telefono = 'Teléfono demasiado corto';
+  }
+  const dniDigits = form.dni.replace(/\D/g, '');
+  if (!form.dni.trim()) {
+    errors.dni = 'Ingresá tu DNI';
+  } else if (dniDigits.length < 7 || dniDigits.length > 8) {
+    errors.dni = 'DNI inválido';
   }
   return errors;
 }
@@ -68,6 +75,7 @@ export default function Reservar() {
     apellido: '',
     email: '',
     telefono: '',
+    dni: '',
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState(false);
@@ -143,6 +151,7 @@ export default function Reservar() {
         apellido: form.apellido.trim(),
         email: form.email.trim(),
         telefono: form.telefono.trim(),
+        dni: form.dni.replace(/\D/g, ''),
       });
 
       // Meta: inicio del checkout. El monto y la moneda viajan como parámetros;
@@ -295,6 +304,19 @@ export default function Reservar() {
             value={form.telefono}
             onChange={handleChange('telefono')}
             error={errors.telefono}
+            disabled={submitting}
+          />
+
+          <Input
+            label="DNI"
+            name="dni"
+            inputMode="numeric"
+            autoComplete="off"
+            maxLength={10}
+            placeholder="12345678"
+            value={form.dni}
+            onChange={handleChange('dni')}
+            error={errors.dni}
             disabled={submitting}
           />
 
