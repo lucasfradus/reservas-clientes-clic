@@ -41,6 +41,7 @@ export interface CheckoutPayload {
   apellido: string;
   email: string;
   telefono: string;
+  dni: string;
 }
 
 export interface CheckoutResponse {
