@@ -8,6 +8,13 @@ import type {
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+/**
+ * Este front es el de Pilates (reservas.clicpilates.com), un solo tenant.
+ * `tipo` filtra por disciplina en la API vía `Sede.plantillaRutina`, así las
+ * sedes de gimnasio (que reservan gratis desde clicfit-web) no se cuelan acá.
+ */
+const TIPO = 'PILATES';
+
 if (!BASE_URL) {
   // Fail loud during development if env is missing.
   // eslint-disable-next-line no-console
@@ -84,12 +91,12 @@ function normalizeSede(
 export async function getSedes(): Promise<Sede[]> {
   const raw = await request<
     Array<Sede & { precioPrueba: unknown; fotos?: unknown }>
-  >('/api/public/sedes');
+  >(`/api/public/sedes?tipo=${TIPO}`);
   return raw.map(normalizeSede);
 }
 
 export function getClases(sedeId: number): Promise<Clase[]> {
-  return request<Clase[]>(`/api/public/sedes/${sedeId}/clases`);
+  return request<Clase[]>(`/api/public/sedes/${sedeId}/clases?tipo=${TIPO}`);
 }
 
 export function getCatalogo(sede?: string | number): Promise<CatalogoSede[]> {
