@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Clase, Sede } from '../../types';
 import { formatTime } from '../../lib/format';
-import { trackEvent } from '../../lib/analytics';
+import { trackVenta } from '../../lib/analytics';
 import './ClaseRow.css';
 
 export function ClaseRow({ clase, sede }: { clase: Clase; sede: Sede }) {
@@ -16,11 +16,16 @@ export function ClaseRow({ clase, sede }: { clase: Clase; sede: Sede }) {
       state={{ clase, sede }}
       className="clase-row"
       onClick={() =>
-        trackEvent('begin_reserva', {
-          clase_id: clase.id,
-          sede_slug: sede.slug,
-          sede_nombre: sede.nombre,
-          actividad: clase.actividad.nombre,
+        // Arranca el checkout: es el momento más preciso del embudo, justo
+        // antes de ir al formulario. El botón "RESERVAR CLASE DE PRUEBA" de
+        // más arriba solo hace scroll y a propósito no dispara nada, así el
+        // evento no se cuenta dos veces.
+        trackVenta('begin_checkout', {
+          nombre: clase.actividad.nombre,
+          categoria: 'Trial',
+          sede: sede.nombre,
+          sedeSlug: sede.slug,
+          precio: sede.precioPrueba,
         })
       }
     >

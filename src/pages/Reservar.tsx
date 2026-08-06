@@ -12,6 +12,7 @@ import {
   formatPrice,
   formatTime,
 } from '../lib/format';
+import { trackVenta } from '../lib/analytics';
 import { trackMetaEvent } from '../lib/meta';
 import './Reservar.css';
 
@@ -166,6 +167,17 @@ export default function Reservar() {
         checkoutParams.currency = 'ARS';
       }
       trackMetaEvent('InitiateCheckout', checkoutParams, undefined, load.sede.slug);
+
+      // GA4: último escalón antes de irse a Mercado Pago. Comparado contra
+      // `purchase` dice cuánta gente se pierde dentro de la pasarela, que es
+      // plata que se cae fuera del sitio y de otra forma no se ve.
+      trackVenta('add_payment_info', {
+        nombre: load.clase.actividad.nombre,
+        categoria: 'Trial',
+        sede: load.sede.nombre,
+        sedeSlug: load.sede.slug,
+        precio,
+      });
 
       window.location.href = res.initPoint;
     } catch (err) {
