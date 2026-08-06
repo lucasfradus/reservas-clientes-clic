@@ -165,7 +165,7 @@ export default function Reservar() {
         checkoutParams.value = precio;
         checkoutParams.currency = 'ARS';
       }
-      trackMetaEvent('InitiateCheckout', checkoutParams);
+      trackMetaEvent('InitiateCheckout', checkoutParams, undefined, load.sede.slug);
 
       window.location.href = res.initPoint;
     } catch (err) {
