@@ -58,14 +58,20 @@ export default function Precios() {
 
   useEffect(load, [slug]);
 
-  useEffect(() => {
-    trackEvent('view_precios', { sede_slug: slug });
-  }, [slug]);
-
   const sede = useMemo(() => {
     if (state.status !== 'ok') return undefined;
     return state.data.find((s) => s.sedeSlug === slug) ?? state.data[0];
   }, [state, slug]);
+
+  // Se espera a que cargue el catálogo para poder mandar el nombre de la sede,
+  // que es como se la lee en los informes.
+  useEffect(() => {
+    if (!sede) return;
+    trackEvent('view_precios', {
+      sede: sede.sedeNombre,
+      sede_slug: sede.sedeSlug,
+    });
+  }, [sede]);
 
   const sedeNombre = sede?.sedeNombre ?? 'Sede';
 
