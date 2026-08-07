@@ -158,9 +158,14 @@ export default function Reservar() {
       // Meta: inicio del checkout. El monto y la moneda viajan como parámetros;
       // el Purchase se dispara en /gracias leyendo los query params de Mercado Pago.
       const precio = load.sede.precioPrueba;
+      // `content_category` lleva el TIPO de venta, no la sede: es el campo por
+      // el que Meta permite armar conversiones personalizadas, y lo que hay que
+      // poder separar es "clase de prueba" de "suscripción". La sede va como
+      // propiedad propia, que también sirve para filtrar.
       const checkoutParams: Record<string, unknown> = {
         content_name: load.clase.actividad.nombre,
-        content_category: load.sede.nombre,
+        content_category: 'Trial',
+        sede: load.sede.nombre,
       };
       if (precio != null) {
         checkoutParams.value = precio;
